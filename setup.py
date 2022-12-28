@@ -1,30 +1,14 @@
 from setuptools import setup, find_packages
-from pip._internal.req.req_file import parse_requirements
-from pip._internal.download import PipSession
 import locking
 
 from os import path
 
 
-# Lists of requirements and dependency links which are needed during runtime, testing and setup
-install_requires = []
-tests_require = []
-dependency_links = []
+with open('requirements/requirements.txt') as f:
+    install_requires = [ r for r in f.read().splitlines() if not r.strip().startswith("#") ]
 
-# Inject requirements from requirements.txt into setup.py
-requirements_file = parse_requirements(path.join('requirements', 'requirements.txt'), session=PipSession())
-for req in requirements_file:
-    install_requires.append(str(req.req))
-    if req.link:
-        dependency_links.append(str(req.link))
-
-# Inject test requirements from requirements_test.txt into setup.py
-requirements_test_file = parse_requirements(path.join('requirements', 'requirements_test.txt'), session=PipSession())
-for req in requirements_test_file:
-    tests_require.append(str(req.req))
-    if req.link:
-        dependency_links.append(str(req.link))
-
+with open('requirements/requirements.txt') as f:
+    tests_require = [ r for r in f.read().splitlines() if not r.strip().startswith("#") ]
 
 setup(
     name="django-db-locking",
@@ -40,7 +24,6 @@ setup(
     install_requires=install_requires,
     extras_require={'celery':  ["celery"] },
     tests_require=tests_require,
-    dependency_links=dependency_links,
     zip_safe=False,
     classifiers=[
         'Intended Audience :: Developers',
